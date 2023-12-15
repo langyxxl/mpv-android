@@ -71,6 +71,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <data android:scheme="dav" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <!-- no android:host since Android 12 doesn't like it, see #497 #514 -->
