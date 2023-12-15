@@ -410,7 +410,21 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("force-window", "yes")
 
         if (filePath != null) {
-            MPVLib.command(arrayOf("loadfile", filePath as String))
+            val fPath = filePath as String
+           if (fPath.startsWith("dav://192.168.31.82:5244/dav/")) {
+                fPath.removePrefix("dav://192.168.31.82:5244/dav/")
+               if (fPath.endsWith("enc")) {
+                    MPVLib.command(arrayOf("loadfile", "lavf://crypto:http://192.168.31.82:5244/d/$fPath"))
+               }
+               else {
+                    MPVLib.command(arrayOf("loadfile", "http://192.168.31.82:5244/d/$fPath"))
+               }
+            }
+           else{
+               if (fPath.endsWith("enc")) {
+                   MPVLib.command(arrayOf("loadfile", "lavf://crypto:$fPath"))
+               }
+           }
             filePath = null
         } else {
             // We disable video output when the context disappears, enable it back
