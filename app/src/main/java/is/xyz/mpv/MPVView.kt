@@ -156,10 +156,14 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         if (event.actionMasked == MotionEvent.ACTION_SCROLL) {
             val h = event.getAxisValue(MotionEvent.AXIS_HSCROLL)
             val v = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
-            if (abs(h) > 0)
-                MPVLib.command(arrayOf("keypress", if (h < 0) "WHEEL_LEFT" else "WHEEL_RIGHT"))
-            if (abs(v) > 0)
-                MPVLib.command(arrayOf("keypress", if (v < 0) "WHEEL_DOWN" else "WHEEL_UP"))
+            if (h > 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_RIGHT", "$h"))
+            else if (h < 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_LEFT", "${-h}"))
+            if (v > 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_UP", "$v"))
+            else if (v < 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_DOWN", "${-v}"))
             return true
         }
         return false
@@ -210,6 +214,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Property("duration", MPV_FORMAT_INT64),
             Property("pause", MPV_FORMAT_FLAG),
             Property("paused-for-cache", MPV_FORMAT_FLAG),
+            Property("speed"),
             Property("track-list"),
             // observing double properties is not hooked up in the JNI code, but doing this
             // will restrict updates to when it actually changes
@@ -323,11 +328,22 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         get() = MPVLib.getPropertyDouble("speed")
         set(speed) = MPVLib.setPropertyDouble("speed", speed!!)
 
+    var subDelay: Double?
+        get() = MPVLib.getPropertyDouble("sub-delay")
+        set(speed) = MPVLib.setPropertyDouble("sub-delay", speed!!)
+
+    var secondarySubDelay: Double?
+        get() = MPVLib.getPropertyDouble("secondary-sub-delay")
+        set(speed) = MPVLib.setPropertyDouble("secondary-sub-delay", speed!!)
+
     val estimatedVfFps: Double?
         get() = MPVLib.getPropertyDouble("estimated-vf-fps")
 
-    val videoAspect: Double?
-        get() = MPVLib.getPropertyDouble("video-params/aspect")
+    val videoOutAspect: Double?
+        get() = MPVLib.getPropertyDouble("video-out-params/aspect")
+
+    val videoOutRotation: Int?
+        get() = MPVLib.getPropertyInt("video-out-params/rotate")
 
     class TrackDelegate(private val name: String) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
