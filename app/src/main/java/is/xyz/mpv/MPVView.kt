@@ -427,13 +427,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
         if (filePath != null) {
             val fPath = filePath as String
-           if (fPath.startsWith("dav://192.168.31.82:5244/dav/")) {
-                val f = fPath.removePrefix("dav://192.168.31.82:5244/dav/")
+           if (fPath.startsWith("dav://")) {
+                val f = fPath.replace("dav://","http://").replace("/dav/","/d/")
                if (fPath.endsWith("enc")) {
-                    MPVLib.command(arrayOf("loadfile", "lavf://crypto:http://192.168.31.82:5244/d/$f"))
+                    MPVLib.command(arrayOf("loadfile", "lavf://crypto:$f"))
                }
                else {
-                    MPVLib.command(arrayOf("loadfile", "http://192.168.31.82:5244/d/$f"))
+                    MPVLib.command(arrayOf("loadfile", "$f"))
                }
             }
            else{
