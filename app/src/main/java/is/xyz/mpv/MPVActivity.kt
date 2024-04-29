@@ -383,6 +383,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             moveTaskToBack(true)
         } else {
             MPVLib.command(arrayOf("loadfile", filepath))
+	    MPVLib.setPropertyBoolean("pause", false)
         }
     }
 
